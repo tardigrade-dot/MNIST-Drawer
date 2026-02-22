@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main] # 只要你向 main 分支推送代码，就会触发自动部署
+
+permissions:
+  contents: write # 必须赋予写权限，否则无法创建和推送 gh-pages 分支
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build # 这里会生成 dist 目录
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # 告诉 Action 把哪个文件夹的内容部署出去
+          branch: gh-pages # 部署到这个分支
